@@ -18,7 +18,6 @@ public class main {
         List<Employe> employes = daoEmploye.All();
         employes.forEach(emp -> System.out.println(emp));
 
-
         Optional<Employe> employe = daoEmploye.Read(1);
         employe.ifPresentOrElse(
                 emp -> System.out.println(emp),
