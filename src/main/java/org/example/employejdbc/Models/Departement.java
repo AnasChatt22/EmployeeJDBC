@@ -1,13 +1,11 @@
 package org.example.employejdbc.Models;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Departement {
     private int id_dept ;
     private String Nom_dept ;
+    private List<Employe> employes = new ArrayList<Employe>();
 
 
     public Departement(int id_dept, String nom_dept) {
@@ -15,6 +13,15 @@ public class Departement {
         this.Nom_dept = nom_dept;
     }
 
+    public void ajouteEmploye(Employe emp) throws Exception {
+        if(employes.contains(emp)) throw new Exception("Employe existe deja !");
+        employes.add(emp);
+    }
+
+    public void retireEmploye(Employe emp) throws Exception {
+        if(!employes.contains(emp)) throw new Exception("Employe introuvable !");
+        employes.remove(emp);
+    }
 
     public int getId_dept() {
         return id_dept;
