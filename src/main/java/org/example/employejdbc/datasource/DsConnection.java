@@ -1,27 +1,36 @@
 package org.example.employejdbc.datasource;
+
 import com.mysql.cj.jdbc.MysqlDataSource;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DsConnection {
-    public static Connection getConnection()
-    {
-        try
-        {
+    private static Connection connection;
+
+    private DsConnection() {
+        // private constructor to prevent instantiation
+    }
+
+    public static Connection getConnection() {
+        if (connection == null) {
+            initializeConnection();
+        }
+        return connection;
+    }
+
+    private static void initializeConnection() {
+        try {
             MysqlDataSource ds = new MysqlDataSource();
-            // Initialisation de la source
+            // Initialization of the source
             ds.setURL("jdbc:mysql://localhost/entreprise");
             ds.setUser("root");
             ds.setPassword("");
-            Connection MyCon = ds.getConnection();
-            // Récupération de la connexion
-            System.out.println(" Connexion établie ....");
-            return MyCon;
-        }
-        catch(SQLException ex)
-        {
+            connection = ds.getConnection();
+            // Retrieving the connection
+            System.out.println("Connection established....");
+        } catch (SQLException ex) {
             ex.printStackTrace();
-            return null ;
         }
     }
 }

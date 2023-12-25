@@ -44,4 +44,8 @@ public class Departement {
     public String toString() {
         return Nom_dept;
     }
+
+    public void setEmployes(List<Employe> employes) {
+        this.employes = employes;
+    }
 }

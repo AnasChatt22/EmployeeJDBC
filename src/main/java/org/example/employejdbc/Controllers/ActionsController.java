@@ -4,25 +4,36 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import org.example.employejdbc.Application;
 import org.example.employejdbc.Models.DaoDepartement;
 import org.example.employejdbc.Models.DaoEmploye;
 import org.example.employejdbc.Models.Departement;
 import org.example.employejdbc.Models.Employe;
 import org.example.employejdbc.datasource.DsConnection;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class ActionsController implements Initializable {
 
     @FXML
     private TextField id_input_delete;
+
     @FXML
     private TextField id_input_update;
+
+    @FXML
+    private Button back_btn;
+
     @FXML
     private Button add_btn;
 
@@ -39,6 +50,9 @@ public class Controller implements Initializable {
     private Button delete_btn;
 
     @FXML
+    private Button update_btn;
+
+    @FXML
     private TableColumn<Employe, Integer> age_column;
 
     @FXML
@@ -51,9 +65,6 @@ public class Controller implements Initializable {
     private TableColumn<Employe, String> dep_column;
 
     @FXML
-    private Label dep_maxemp_label;
-
-    @FXML
     private ComboBox<Departement> dep_select_add;
 
     @FXML
@@ -61,9 +72,6 @@ public class Controller implements Initializable {
 
     @FXML
     private TableColumn<Employe, Integer> id_column;
-
-    @FXML
-    private Label nbr_emp_label;
 
     @FXML
     private TableColumn<Employe, String> nom_column;
@@ -84,21 +92,15 @@ public class Controller implements Initializable {
     private TextField salaire_input_update;
 
     @FXML
-    private Button search_btn;
-
-    @FXML
-    private TextField search_input;
+    private Button search_byID_button;
 
     @FXML
     private TableView<Employe> table;
 
-    @FXML
-    private Button update_btn;
+    private final Connection connection = DsConnection.getConnection();
 
-    private final Connection Myconn = DsConnection.getConnection();
-
-    private final DaoEmploye daoEmploye = new DaoEmploye(Myconn);
-    private final DaoDepartement daoDepartement = new DaoDepartement(Myconn);
+    private final DaoEmploye daoEmploye = new DaoEmploye(connection);
+    private final DaoDepartement daoDepartement = new DaoDepartement(connection);
 
 
     @Override
@@ -107,7 +109,6 @@ public class Controller implements Initializable {
         dep_select_add.setItems(departmentList);
         dep_select_update.setItems(departmentList);
         showEmployee();
-        nbr_total_employee();
     }
 
     private ObservableList<Departement> getDepartments() {
@@ -134,9 +135,7 @@ public class Controller implements Initializable {
             // Proceed with adding the employee
             Employe emp = new Employe(0, nom, salaire, age, selectedDepartement);
             if (daoEmploye.Add(emp)) {
-                selectedDepartement.ajouteEmploye(emp);
                 showEmployee();
-                nbr_total_employee();
                 nom_input_add.clear();
                 age_input_add.clear();
                 salaire_input_add.clear();
@@ -153,12 +152,34 @@ public class Controller implements Initializable {
     }
 
     @FXML
+    void search_emp_byID(ActionEvent actionEvent) {
+        String input_id = id_input_update.getText();
+
+        if (input_id.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please fill in all required fields", "");
+            return;
+        }
+
+        Optional<Employe> employeOptional = daoEmploye.Read(Integer.parseInt(input_id));
+
+        employeOptional.ifPresent(employe -> {
+            nom_input_update.setText(employe.getNom());
+            age_input_update.setText(String.valueOf(employe.getAge()));
+            salaire_input_update.setText(String.valueOf(employe.getSalaire()));
+            dep_select_update.getSelectionModel().select(employe.getDep());
+        });
+        if (employeOptional.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Employee Not Found", "No employee found with ID: " + input_id, "");
+        }
+    }
+
+    @FXML
     void Update(ActionEvent event) {
         String input_id = id_input_update.getText();
         String nom = nom_input_update.getText();
         String salaireText = salaire_input_update.getText();
         String ageText = age_input_update.getText();
-        Departement selectedDepartement = dep_select_update.getValue();
+        Departement selectedDepartement = dep_select_update.getSelectionModel().getSelectedItem();
 
         if (input_id.isEmpty() || nom.isEmpty() || salaireText.isEmpty() || ageText.isEmpty() || selectedDepartement == null) {
             showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please fill in all required fields", "");
@@ -173,7 +194,6 @@ public class Controller implements Initializable {
 
             if (daoEmploye.Update(emp, id)) {
                 showEmployee();
-                nbr_total_employee();
                 id_input_update.clear();
                 nom_input_update.clear();
                 age_input_update.clear();
@@ -200,7 +220,6 @@ public class Controller implements Initializable {
         }
         if (daoEmploye.Delete(Integer.parseInt(input_id))) {
             showEmployee();
-            nbr_total_employee();
             id_input_delete.clear();
             showAlert(Alert.AlertType.INFORMATION, "Employee Delete", "Employee Delete", "Employee Deleted successfully !");
         } else {
@@ -208,10 +227,6 @@ public class Controller implements Initializable {
         }
     }
 
-    @FXML
-    void Search_by_dep(ActionEvent event) {
-
-    }
 
     @FXML
     void Clear_fields_add(ActionEvent event) {
@@ -235,6 +250,7 @@ public class Controller implements Initializable {
         dep_select_update.getSelectionModel().clearSelection();
     }
 
+
     private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -256,8 +272,17 @@ public class Controller implements Initializable {
 
     }
 
-    public void nbr_total_employee() {
-        nbr_emp_label.setText(String.valueOf(daoEmploye.Count()));
+    @FXML
+    public void Back_Home(ActionEvent actionEvent) {
+        try {
+            back_btn.getScene().getWindow().hide();
+            FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("Home.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
 }

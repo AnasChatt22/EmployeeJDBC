@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="361.0"
+           prefWidth="552.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.employejdbc.Controllers.HomeController">
+    <children>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+            <children>
+                <Button fx:id="action_button" layoutX="317.0" layoutY="129.0" mnemonicParsing="false"
+                        onAction="#open_actions" prefHeight="102.0" prefWidth="162.0" text="Actions sur les employés"
+                        textAlignment="CENTER"/>
+                <Button fx:id="stat_button" layoutX="73.0" layoutY="129.0" mnemonicParsing="false"
+                        onAction="#open_statistics" prefHeight="102.0" prefWidth="162.0" text="Statistiques"
+                        textAlignment="CENTER"/>
+                <Text layoutX="154.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Gestion de l'entreprise" wrappingWidth="244.150390625">
+                    <font>
+                        <Font size="24.0"/>
+                    </font>
+                </Text>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>

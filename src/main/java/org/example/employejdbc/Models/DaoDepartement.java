@@ -2,13 +2,17 @@ package org.example.employejdbc.Models;
 
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class DaoDepartement implements CRUD<Departement, Integer> {
 
-    private final Connection MyConn ;
+    private final Connection connection;
+
     public DaoDepartement(Connection MyConn) {
-        this.MyConn = MyConn ;
+        this.connection = MyConn;
     }
 
     @Override
@@ -21,7 +25,7 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
         List<Departement> deps = new ArrayList<Departement>();
         String requete = "SELECT * FROM departement";
         try {
-            Statement st = MyConn.createStatement();
+            Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(requete);
             while (rs.next()) {
                 deps.add(new Departement(rs.getInt(1), rs.getString(2)));
@@ -32,17 +36,14 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
 
         // Sort the list by department ID
         deps.sort(Comparator.comparingInt(Departement::getId_dept));
-
         return deps;
     }
-
-
 
     @Override
     public Optional<Departement> Read(Integer ID) {
         String requete = "SELECT * FROM departement WHERE IdDept = ?";
         try {
-            PreparedStatement Pst = MyConn.prepareStatement(requete);
+            PreparedStatement Pst = connection.prepareStatement(requete);
             Pst.setInt(1, ID);
             ResultSet rs = Pst.executeQuery();
             if (rs.next()) {
@@ -68,5 +69,27 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
     public Long Count() {
         return null;
     }
+
+    public Departement Dep_with_max_employees() {
+        String requete = "SELECT d.IdDept, d.NomDept, COUNT(e.IdEmp) AS EmployeeCount " +
+                "FROM departement d " +
+                "LEFT JOIN employee e ON d.IdDept = e.RefDept " +
+                "GROUP BY d.IdDept " +
+                "ORDER BY EmployeeCount DESC " +
+                "LIMIT 1";
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(requete);
+            if (rs.next()) {
+                int idDept = rs.getInt(1);
+                String name = rs.getString(2);
+                return new Departement(idDept, name);
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
+
 
 }

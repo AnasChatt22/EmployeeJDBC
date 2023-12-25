@@ -1,4 +1,6 @@
-package org.example.employejdbc.datasource;
+package org.example.employejdbc.Models;
+
+import org.example.employejdbc.datasource.DsConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

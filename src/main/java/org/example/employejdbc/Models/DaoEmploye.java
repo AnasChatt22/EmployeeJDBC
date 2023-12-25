@@ -1,7 +1,10 @@
 package org.example.employejdbc.Models;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class DaoEmploye implements CRUD<Employe, Integer> {
 
@@ -24,6 +27,8 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             int nbr_lignes = Pst.executeUpdate();
             if (nbr_lignes == 1) {
                 System.out.println("Employee added successfully.");
+                // ajouter employé dans la liste des departements
+                // emp.getDep().ajouteEmploye(emp);
                 return true;
             } else {
                 System.err.println("Addition of Employee failed ! ");
@@ -32,6 +37,8 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
         } catch (SQLException ex) {
             System.err.println("Error in Query Create : " + ex.getMessage());
             return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -48,6 +55,7 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
                 Departement departement = departementOptional.orElse(null);
                 employees.add(new Employe(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getInt(4), departement));
             }
+
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         } catch (Exception e) {
@@ -70,10 +78,10 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             Pst.setInt(1, ID);
             ResultSet rs = Pst.executeQuery();
             if (rs.next()) {
-                System.out.println("Article found !");
+                System.out.println("Employee found !");
                 Optional<Departement> departementOptional = daoDepartement.Read(rs.getInt(5));
                 Departement departement = departementOptional.orElse(null);
-                Employe emp = new Employe(rs.getInt(1),rs.getString(2), rs.getDouble(3), rs.getInt(4), departement);
+                Employe emp = new Employe(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getInt(4), departement);
                 return Optional.of(emp);
             }
         } catch (SQLException ex) {
@@ -95,11 +103,10 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             Pst.setInt(4, emp.getDep().getId_dept());
             Pst.setInt(5, ID);
             int ligne = Pst.executeUpdate();
-            if (ligne != 0){
+            if (ligne != 0) {
                 System.out.println("Employee updated successfully !");
-                return true ;
-            }
-            else {
+                return true;
+            } else {
                 System.out.println("Employee not found !");
                 return false;
             }
@@ -116,11 +123,10 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             PreparedStatement Pst = MyConn.prepareStatement(requete);
             Pst.setInt(1, ID);
             int ligne = Pst.executeUpdate();
-            if (ligne != 0){
+            if (ligne != 0) {
                 System.out.println(ligne + " employee deleted with success !");
-                return true ;
-            }
-            else {
+                return true;
+            } else {
                 System.out.println("employee not found !");
                 return false;
             }
