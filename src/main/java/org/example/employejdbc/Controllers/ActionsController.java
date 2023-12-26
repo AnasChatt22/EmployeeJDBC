@@ -23,6 +23,8 @@ import java.sql.Connection;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static org.example.employejdbc.Controllers.AlertController.AfficherAlert;
+
 public class ActionsController implements Initializable {
 
     @FXML
@@ -33,24 +35,6 @@ public class ActionsController implements Initializable {
 
     @FXML
     private Button back_btn;
-
-    @FXML
-    private Button add_btn;
-
-    @FXML
-    private Button clear_btn_add;
-
-    @FXML
-    private Button clear_btn_delete;
-
-    @FXML
-    private Button clear_btn_update;
-
-    @FXML
-    private Button delete_btn;
-
-    @FXML
-    private Button update_btn;
 
     @FXML
     private TableColumn<Employe, Integer> age_column;
@@ -92,9 +76,6 @@ public class ActionsController implements Initializable {
     private TextField salaire_input_update;
 
     @FXML
-    private Button search_byID_button;
-
-    @FXML
     private TableView<Employe> table;
 
     private final Connection connection = DsConnection.getConnection();
@@ -108,7 +89,7 @@ public class ActionsController implements Initializable {
         ObservableList<Departement> departmentList = getDepartments();
         dep_select_add.setItems(departmentList);
         dep_select_update.setItems(departmentList);
-        showEmployee();
+        afficherEmployes();
     }
 
     private ObservableList<Departement> getDepartments() {
@@ -117,14 +98,14 @@ public class ActionsController implements Initializable {
     }
 
     @FXML
-    void Add(ActionEvent event) {
+    void Ajouter(ActionEvent event) {
         String nom = nom_input_add.getText();
         String salaireText = salaire_input_add.getText();
         String ageText = age_input_add.getText();
         Departement selectedDepartement = dep_select_add.getValue();
 
         if (nom.isEmpty() || salaireText.isEmpty() || ageText.isEmpty() || selectedDepartement == null) {
-            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please fill in all required fields", "");
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "Veuillez remplir tous les champs obligatoires", "");
             return;
         }
 
@@ -132,31 +113,38 @@ public class ActionsController implements Initializable {
             double salaire = Double.parseDouble(salaireText);
             int age = Integer.parseInt(ageText);
 
-            // Proceed with adding the employee
+            if (age < 18 || age > 63) {
+                AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "L'âge doit être entre 18 et 63", "");
+                return;
+            }
+
             Employe emp = new Employe(0, nom, salaire, age, selectedDepartement);
             if (daoEmploye.Add(emp)) {
-                showEmployee();
+                afficherEmployes();
                 nom_input_add.clear();
                 age_input_add.clear();
                 salaire_input_add.clear();
                 dep_select_add.getSelectionModel().clearSelection();
-                showAlert(Alert.AlertType.INFORMATION, "Employee Registration", "Employee Registration", "Employee Added successfully !");
+                dep_select_add.setValue(null);
+
+                AfficherAlert(Alert.AlertType.INFORMATION, "Enregistrement de l'employé", "Enregistrement de l'employé", "Employé ajouté avec succès !");
             } else {
-                showAlert(Alert.AlertType.ERROR, "Employee Registration", "Employee Registration", "Employee not Added !");
+                AfficherAlert(Alert.AlertType.ERROR, "Enregistrement de l'employé", "Enregistrement de l'employé", "Employé non ajouté !");
             }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please enter valid numeric values for Salary and Age", "");
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "Veuillez saisir des valeurs numériques valides pour le salaire et l'âge", "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+
     @FXML
-    void search_emp_byID(ActionEvent actionEvent) {
+    void Chercher_emp_parID(ActionEvent actionEvent) {
         String input_id = id_input_update.getText();
 
         if (input_id.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please fill in all required fields", "");
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "Veuillez remplir tous les champs obligatoires", "");
             return;
         }
 
@@ -167,14 +155,16 @@ public class ActionsController implements Initializable {
             age_input_update.setText(String.valueOf(employe.getAge()));
             salaire_input_update.setText(String.valueOf(employe.getSalaire()));
             dep_select_update.getSelectionModel().select(employe.getDep());
+
         });
         if (employeOptional.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Employee Not Found", "No employee found with ID: " + input_id, "");
+            AfficherAlert(Alert.AlertType.WARNING, "Employé Non Trouvé", "Aucun employé trouvé avec l'ID : " + input_id, "");
         }
     }
 
+
     @FXML
-    void Update(ActionEvent event) {
+    void Modifier(ActionEvent event) {
         String input_id = id_input_update.getText();
         String nom = nom_input_update.getText();
         String salaireText = salaire_input_update.getText();
@@ -182,84 +172,94 @@ public class ActionsController implements Initializable {
         Departement selectedDepartement = dep_select_update.getSelectionModel().getSelectedItem();
 
         if (input_id.isEmpty() || nom.isEmpty() || salaireText.isEmpty() || ageText.isEmpty() || selectedDepartement == null) {
-            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please fill in all required fields", "");
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "Veuillez remplir tous les champs obligatoires", "");
             return;
         }
 
         try {
             int id = Integer.parseInt(id_input_update.getText());
             double salaire = Double.parseDouble(salaireText);
+
+            // Age validation
             int age = Integer.parseInt(ageText);
+            if (age < 18 || age > 63) {
+                AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "L'âge doit être entre 18 et 63", "");
+                return;
+            }
+
             Employe emp = new Employe(id, nom, salaire, age, selectedDepartement);
 
             if (daoEmploye.Update(emp, id)) {
-                showEmployee();
+                afficherEmployes();
                 id_input_update.clear();
                 nom_input_update.clear();
                 age_input_update.clear();
                 salaire_input_update.clear();
                 dep_select_update.getSelectionModel().clearSelection();
-                showAlert(Alert.AlertType.INFORMATION, "Employee Update", "Employee Update", "Employee Updated successfully !");
+                dep_select_update.setValue(null);
+                AfficherAlert(Alert.AlertType.INFORMATION, "Mise à jour de l'employé", "Mise à jour de l'employé", "Employé mis à jour avec succès !");
             } else {
-                showAlert(Alert.AlertType.ERROR, "Employee Update", "Employee Update", "Employee not Updated!");
+                AfficherAlert(Alert.AlertType.ERROR, "Mise à jour de l'employé", "Mise à jour de l'employé", "Employé non mis à jour !");
             }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please enter valid numeric values for Salary and Age", "");
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "Veuillez saisir des valeurs numériques valides pour le salaire et l'âge et l'ID", "");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+
     @FXML
-    void Delete(ActionEvent event) {
+    void Supprimer(ActionEvent event) {
         String input_id = id_input_delete.getText();
 
-        if (input_id.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Input Validation Error", "Please fill in all required fields", "");
+        // Check if input_id contains only numbers
+        if (!input_id.matches("\\d+")) {
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "L'ID doit être un nombre entier positif", "");
             return;
         }
+
+        if (input_id.isEmpty()) {
+            AfficherAlert(Alert.AlertType.ERROR, "Erreur de Validation", "Veuillez remplir tous les champs obligatoires", "");
+            return;
+        }
+
         if (daoEmploye.Delete(Integer.parseInt(input_id))) {
-            showEmployee();
+            afficherEmployes();
             id_input_delete.clear();
-            showAlert(Alert.AlertType.INFORMATION, "Employee Delete", "Employee Delete", "Employee Deleted successfully !");
+            AfficherAlert(Alert.AlertType.INFORMATION, "Suppression de l'employé", "Suppression de l'employé", "Employé supprimé avec succès !");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Employee Delete", "Employee Delete", "Employee not Deleted!");
+            AfficherAlert(Alert.AlertType.ERROR, "Suppression de l'employé", "Suppression de l'employé", "Employé non trouvé ou non supprimé !");
         }
     }
 
 
     @FXML
-    void Clear_fields_add(ActionEvent event) {
+    void EffacerChampsAjout(ActionEvent event) {
         nom_input_add.clear();
         salaire_input_add.clear();
         age_input_add.clear();
         dep_select_add.getSelectionModel().clearSelection();
+        dep_select_update.setValue(null);
     }
 
     @FXML
-    void Clear_fields_delete(ActionEvent event) {
+    void EffacerChampsSuppression(ActionEvent event) {
         id_input_delete.clear();
     }
 
     @FXML
-    void Clear_fields_update(ActionEvent event) {
+    void EffacerChampsModification(ActionEvent event) {
         id_input_update.clear();
         nom_input_update.clear();
         salaire_input_update.clear();
         age_input_update.clear();
         dep_select_update.getSelectionModel().clearSelection();
+        dep_select_update.setValue(null);
     }
 
 
-    private void showAlert(Alert.AlertType alertType, String title, String header, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    public void showEmployee() {
+    public void afficherEmployes() {
 
         ObservableList<Employe> employes = FXCollections.observableArrayList(daoEmploye.All());
         table.setItems(employes);
@@ -269,11 +269,10 @@ public class ActionsController implements Initializable {
         age_column.setCellValueFactory(new PropertyValueFactory<Employe, Integer>("Age"));
         salaire_column.setCellValueFactory(new PropertyValueFactory<Employe, Double>("Salaire"));
         dep_column.setCellValueFactory(new PropertyValueFactory<Employe, String>("dep"));
-
     }
 
     @FXML
-    public void Back_Home(ActionEvent actionEvent) {
+    public void RetourAccueil(ActionEvent actionEvent) {
         try {
             back_btn.getScene().getWindow().hide();
             FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("Home.fxml"));
@@ -285,4 +284,5 @@ public class ActionsController implements Initializable {
             e.printStackTrace();
         }
     }
+
 }

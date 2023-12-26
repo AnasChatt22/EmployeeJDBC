@@ -28,11 +28,11 @@
                                               text="Département"/>
                                         <ComboBox fx:id="dep_select_add" layoutX="409.0" layoutY="84.0"
                                                   prefWidth="150.0" promptText="Choisir"/>
-                                        <Button fx:id="add_btn" layoutX="601.0" layoutY="34.0" mnemonicParsing="false"
-                                                onAction="#Add" prefHeight="34.0" prefWidth="66.0" text="Ajouter"/>
+                                        <Button fx:id="add_btn" layoutX="585.0" layoutY="34.0" mnemonicParsing="false"
+                                                onAction="#Ajouter" prefHeight="34.0" prefWidth="66.0" text="Ajouter"/>
                                         <Button fx:id="clear_btn_add" layoutX="585.0" layoutY="79.0"
-                                                mnemonicParsing="false" onAction="#Clear_fields_add" prefHeight="34.0"
-                                                prefWidth="97.0" text="Vider champs"/>
+                                                mnemonicParsing="false" onAction="#EffacerChampsAjout" prefHeight="34.0"
+                                                prefWidth="108.0" text="Vider"/>
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -54,17 +54,17 @@
                                               text="Département"/>
                                         <ComboBox fx:id="dep_select_update" layoutX="409.0" layoutY="109.0"
                                                   prefWidth="150.0" promptText="Choisir"/>
-                                        <Button fx:id="update_btn" layoutX="615.0" layoutY="58.0"
-                                                mnemonicParsing="false" onAction="#Update" prefHeight="34.0"
+                                        <Button fx:id="update_btn" layoutX="588.0" layoutY="68.0"
+                                                mnemonicParsing="false" onAction="#Modifier" prefHeight="34.0"
                                                 prefWidth="66.0" text="Modifier"/>
-                                        <Button fx:id="clear_btn_update" layoutX="590.0" layoutY="97.0"
-                                                mnemonicParsing="false" onAction="#Clear_fields_update"
-                                                prefHeight="34.0" prefWidth="97.0" text="Vider champs"/>
+                                        <Button fx:id="clear_btn_update" layoutX="588.0" layoutY="107.0"
+                                                mnemonicParsing="false" onAction="#EffacerChampsModification"
+                                                prefHeight="34.0" prefWidth="97.0" text="Vider"/>
                                         <TextField fx:id="id_input_update" layoutX="225.0" layoutY="22.0"/>
                                         <Text layoutX="183.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0"
                                               text="ID" wrappingWidth="33.54372787475586"/>
                                         <Button fx:id="search_byID_button" layoutX="409.0" layoutY="18.0"
-                                                mnemonicParsing="false" onAction="#search_emp_byID" prefHeight="34.0"
+                                                mnemonicParsing="false" onAction="#Chercher_emp_parID" prefHeight="34.0"
                                                 prefWidth="66.0" text="Chercher"/>
                                     </children>
                                 </AnchorPane>
@@ -76,11 +76,11 @@
                                     <children>
                                         <TextField fx:id="id_input_delete" layoutX="214.0" layoutY="83.0"/>
                                         <Button fx:id="delete_btn" layoutX="394.0" layoutY="79.0"
-                                                mnemonicParsing="false" onAction="#Delete" prefHeight="34.0"
+                                                mnemonicParsing="false" onAction="#Supprimer" prefHeight="34.0"
                                                 prefWidth="86.0" text="Supprimer"/>
                                         <Button fx:id="clear_btn_delete" layoutX="501.0" layoutY="79.0"
-                                                mnemonicParsing="false" onAction="#Clear_fields_delete"
-                                                prefHeight="34.0" prefWidth="97.0" text="Vider champ"/>
+                                                mnemonicParsing="false" onAction="#EffacerChampsSuppression"
+                                                prefHeight="34.0" prefWidth="97.0" text="Vider"/>
                                         <Text layoutX="169.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0"
                                               text="ID" wrappingWidth="30.845733642578125"/>
                                     </children>
@@ -99,8 +99,8 @@
                                      text="Département"/>
                     </columns>
                 </TableView>
-                <Button fx:id="back_btn" layoutY="7.0" mnemonicParsing="false" onAction="#Back_Home" prefHeight="26.0"
-                        prefWidth="58.0" text="Back"/>
+                <Button fx:id="back_btn" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#RetourAccueil"
+                        prefHeight="26.0" prefWidth="58.0" text="Retour"/>
             </children>
         </AnchorPane>
     </children>

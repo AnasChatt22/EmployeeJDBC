@@ -1,5 +1,6 @@
 package org.example.employejdbc.Models;
 
+import java.net.DatagramPacket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,17 +9,17 @@ import java.util.Optional;
 
 public class DaoEmploye implements CRUD<Employe, Integer> {
 
-    private final Connection MyConn;
+    private final Connection connection;
 
-    public DaoEmploye(Connection myConn) {
-        MyConn = myConn;
+    public DaoEmploye(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
     public boolean Add(Employe emp) {
         String requete = "insert into Employee (NomEmp, Salaire, Age, RefDept) values(?,?,?,?);";
         try {
-            PreparedStatement Pst = MyConn.prepareStatement(requete);
+            PreparedStatement Pst = connection.prepareStatement(requete);
             Pst.setString(1, emp.getNom());
             Pst.setDouble(2, emp.getSalaire());
             Pst.setInt(3, emp.getAge());
@@ -44,11 +45,11 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
 
     @Override
     public List<Employe> All() {
-        DaoDepartement daoDepartement = new DaoDepartement(MyConn);
+        DaoDepartement daoDepartement = new DaoDepartement(connection);
         List<Employe> employees = new ArrayList<Employe>();
         String requete = "SELECT * FROM employee";
         try {
-            Statement st = MyConn.createStatement();
+            Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(requete);
             while (rs.next()) {
                 Optional<Departement> departementOptional = daoDepartement.Read(rs.getInt(5));
@@ -71,10 +72,10 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
 
     @Override
     public Optional<Employe> Read(Integer ID) {
-        DaoDepartement daoDepartement = new DaoDepartement(MyConn);
+        DaoDepartement daoDepartement = new DaoDepartement(connection);
         String requete = "select * from employee where IdEmp = ? ";
         try {
-            PreparedStatement Pst = MyConn.prepareStatement(requete);
+            PreparedStatement Pst = connection.prepareStatement(requete);
             Pst.setInt(1, ID);
             ResultSet rs = Pst.executeQuery();
             if (rs.next()) {
@@ -96,7 +97,7 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
     public boolean Update(Employe emp, Integer ID) {
         String requete = "update employee set NomEmp = ?, Salaire = ?, Age = ?, RefDept = ? where IdEmp = ?";
         try {
-            PreparedStatement Pst = MyConn.prepareStatement(requete);
+            PreparedStatement Pst = connection.prepareStatement(requete);
             Pst.setString(1, emp.getNom());
             Pst.setDouble(2, emp.getSalaire());
             Pst.setInt(3, emp.getAge());
@@ -120,7 +121,7 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
     public boolean Delete(Integer ID) {
         String requete = "delete from employee where IdEmp = ?";
         try {
-            PreparedStatement Pst = MyConn.prepareStatement(requete);
+            PreparedStatement Pst = connection.prepareStatement(requete);
             Pst.setInt(1, ID);
             int ligne = Pst.executeUpdate();
             if (ligne != 0) {
@@ -141,15 +142,28 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
     public Long Count() {
         String requete = "select count(*) from employee";
         try {
-            Statement st = MyConn.createStatement();
+            Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(requete);
-            if (rs.next())
-                return rs.getLong(1);
+            if (rs.next()) return rs.getLong(1);
         } catch (SQLException ex) {
             System.out.println("Error in request count : " + ex.getMessage());
         }
         return 0L; // cast to long
     }
 
+    public double MasseSalarialeEntreprise() {
+        String requete = "SELECT SUM(Salaire) FROM employee";
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(requete);
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erreur de calcul de la masse salariale totale : " + ex.getMessage());
+        }
+        return 0.0;
+    }
+    
 
 }

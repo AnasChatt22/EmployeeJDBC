@@ -2,10 +2,7 @@ package org.example.employejdbc.Models;
 
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DaoDepartement implements CRUD<Departement, Integer> {
 
@@ -91,5 +88,73 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
         return null;
     }
 
+    public List<Employe> EmployeesByDepartment(Departement department) {
+        List<Employe> employees = new ArrayList<>();
+        String query = "SELECT * FROM Employee WHERE RefDept = ?";
+
+        try {
+            PreparedStatement Pst = connection.prepareStatement(query);
+            Pst.setInt(1, department.getId_dept());
+
+            ResultSet rs = Pst.executeQuery();
+
+            while (rs.next()) {
+                int idEmp = rs.getInt("IdEmp");
+                String nomEmp = rs.getString("NomEmp");
+                double salaire = rs.getDouble("Salaire");
+                int age = rs.getInt("Age");
+
+                employees.add(new Employe(idEmp, nomEmp, salaire, age, department));
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        employees.sort(Comparator.comparingInt(Employe::getId_emp));
+
+        return employees;
+    }
+
+    public Map<Departement, Integer> CountEmployeesByDepartment() {
+        Map<Departement, Integer> employeemap = new HashMap<>();
+
+        String query = "SELECT d.IdDept, d.NomDept, COUNT(e.IdEmp) AS EmployeeCount " +
+                "FROM departement d " +
+                "LEFT JOIN employee e ON d.IdDept = e.RefDept " +
+                "GROUP BY d.IdDept";
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                int idDept = rs.getInt(1);
+                String nom = rs.getString(2);
+                int employeeCount = rs.getInt(3);
+
+                Departement department = new Departement(idDept, nom);
+                employeemap.put(department, employeeCount);
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return employeemap;
+    }
+
+    public double MasseSalarialeDepartement(Departement dep) {
+        String requete = "SELECT SUM(Salaire) FROM employee WHERE RefDept = ?";
+        try {
+            PreparedStatement Pst = connection.prepareStatement(requete);
+            Pst.setInt(1, dep.getId_dept());
+            ResultSet rs = Pst.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erreur de calcul de la masse salariale du departement " + dep.getNom_dept() + " : " + ex.getMessage());
+        }
+        return 0.0;
+    }
 
 }

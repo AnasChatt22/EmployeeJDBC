@@ -18,6 +18,9 @@ public class HomeController {
     @FXML
     private Button stat_button;
 
+    @FXML
+    private Button aff_emp_dep_btn;
+
     private final Connection connection = DsConnection.getConnection();
 
     @FXML
@@ -33,6 +36,12 @@ public class HomeController {
         loadFXML("Statistics.fxml","Statistiques");
     }
 
+    @FXML
+    public void open_departement(ActionEvent actionEvent) {
+        aff_emp_dep_btn.getScene().getWindow().hide();
+        loadFXML("Departement.fxml","Employés d'un département");
+    }
+
     private void loadFXML(String fxmlFile, String title) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource(fxmlFile));
@@ -46,4 +55,6 @@ public class HomeController {
             e.printStackTrace();
         }
     }
+
+
 }

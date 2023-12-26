@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
@@ -12,18 +11,21 @@
     <children>
         <AnchorPane prefHeight="200.0" prefWidth="200.0">
             <children>
-                <Button fx:id="action_button" layoutX="317.0" layoutY="129.0" mnemonicParsing="false"
-                        onAction="#open_actions" prefHeight="102.0" prefWidth="162.0" text="Actions sur les employés"
+                <Button fx:id="action_button" layoutX="309.0" layoutY="101.0" mnemonicParsing="false"
+                        onAction="#open_actions" prefHeight="102.0" prefWidth="185.0" text="Actions sur les employés"
                         textAlignment="CENTER"/>
-                <Button fx:id="stat_button" layoutX="73.0" layoutY="129.0" mnemonicParsing="false"
+                <Button fx:id="stat_button" layoutX="63.0" layoutY="101.0" mnemonicParsing="false"
                         onAction="#open_statistics" prefHeight="102.0" prefWidth="162.0" text="Statistiques"
                         textAlignment="CENTER"/>
-                <Text layoutX="154.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                <Text layoutX="153.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0"
                       text="Gestion de l'entreprise" wrappingWidth="244.150390625">
                     <font>
                         <Font size="24.0"/>
                     </font>
                 </Text>
+                <Button fx:id="aff_emp_dep_btn" layoutX="144.0" layoutY="231.0" mnemonicParsing="false"
+                        onAction="#open_departement" prefHeight="102.0" prefWidth="263.0"
+                        text="Affichage des employés d'un département" textAlignment="CENTER"/>
             </children>
         </AnchorPane>
     </children>

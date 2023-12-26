@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.employejdbc.Controllers.ActionsController"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0"
+           prefWidth="624.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.employejdbc.Controllers.DepartementController">
+    <children>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+            <children>
+                <ComboBox fx:id="dep_select" layoutX="312.0" layoutY="50.0" onAction="#afficherEmployesParDepartement"
+                          prefWidth="150.0"/>
+                <Text layoutX="128.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Sélectionner le département"/>
+                <TableView fx:id="table" layoutY="130.0" prefHeight="280.0" prefWidth="624.0">
+                    <columns>
+                        <TableColumn fx:id="id_column" prefWidth="58.39996337890625" text="ID"/>
+                        <TableColumn fx:id="nom_column" minWidth="0.0" prefWidth="266.39996337890625" text="Nom"/>
+                        <TableColumn fx:id="salaire_column" prefWidth="190.4000244140625" text="Salaire"/>
+                        <TableColumn fx:id="age_column" minWidth="0.0" prefWidth="108.79998779296875" text="Age"/>
+                    </columns>
+                </TableView>
+                <Button fx:id="back_btn" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#RetourAccueil"
+                        prefHeight="26.0" prefWidth="53.0" text="Retour"/>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>

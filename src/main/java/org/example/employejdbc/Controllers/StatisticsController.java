@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.employejdbc.Application;
 import org.example.employejdbc.Models.DaoDepartement;
@@ -30,6 +31,9 @@ public class StatisticsController implements Initializable {
     private Button back_btn;
 
     @FXML
+    private Label masse_totale_label;
+
+    @FXML
     private TableColumn<Departement, String> dep_column;
 
     @FXML
@@ -42,6 +46,9 @@ public class StatisticsController implements Initializable {
     private TableColumn<Departement, Integer> nbr_employe_column;
 
     @FXML
+    private TableColumn<Departement, Double> masse_column;
+
+    @FXML
     private TableView<Departement> table_nbr_emp_dep;
 
     private final Connection connection = DsConnection.getConnection();
@@ -50,25 +57,47 @@ public class StatisticsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Nombre_employe();
-        Dep_with_max_employe();
+        afficherNombreEmployes();
+        departementAvecPlusEmployes();
+        afficherNbrEmpMasseParDep();
+        afficherMasseTotale();
     }
 
-    public void Nombre_employe() {
+    public void afficherNombreEmployes() {
         nbr_emp_label.setText(String.valueOf(daoEmploye.Count()));
     }
 
-    public void Dep_with_max_employe() {
+    public void departementAvecPlusEmployes() {
         if (daoDepartement.Dep_with_max_employees() != null) {
-            System.out.println("Département avec max employe trouvé !");
             dep_max_emp_label.setText(daoDepartement.Dep_with_max_employees().getNom_dept());
         }
     }
 
+    public void afficherMasseTotale() {
+        masse_totale_label.setText(String.valueOf(daoEmploye.MasseSalarialeEntreprise()));
+    }
+
+    public void afficherNbrEmpMasseParDep() {
+        Map<Departement, Integer> employeemap = daoDepartement.CountEmployeesByDepartment();
+        ObservableList<Departement> departements = FXCollections.observableArrayList();
+
+        for (Map.Entry<Departement, Integer> entry : employeemap.entrySet()) {
+            Departement departement = entry.getKey();
+            int employeeCount = entry.getValue();
+            double masse = daoDepartement.MasseSalarialeDepartement(departement);
+            departement.setNbr_emp(employeeCount);
+            departement.setMasse(masse);
+            departements.add(departement);
+        }
+        dep_column.setCellValueFactory(new PropertyValueFactory<>("nom_dept"));
+        nbr_employe_column.setCellValueFactory(new PropertyValueFactory<>("nbr_emp"));
+        masse_column.setCellValueFactory(new PropertyValueFactory<>("masse"));
+        table_nbr_emp_dep.setItems(departements);
+    }
 
 
     @FXML
-    public void Back_Home(ActionEvent actionEvent) {
+    public void RetourAccueil(ActionEvent actionEvent) {
         try {
             back_btn.getScene().getWindow().hide();
             FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("Home.fxml"));

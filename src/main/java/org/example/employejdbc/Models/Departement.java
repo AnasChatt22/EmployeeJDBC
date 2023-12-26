@@ -1,26 +1,15 @@
 package org.example.employejdbc.Models;
 
-import java.util.*;
-
 public class Departement {
-    private int id_dept ;
-    private String Nom_dept ;
-    private List<Employe> employes = new ArrayList<Employe>();
+    private int id_dept;
+    private String Nom_dept;
+    private int nbr_emp ;
+    private double masse ;
 
 
     public Departement(int id_dept, String nom_dept) {
         this.id_dept = id_dept;
         this.Nom_dept = nom_dept;
-    }
-
-    public void ajouteEmploye(Employe emp) throws Exception {
-        if(employes.contains(emp)) throw new Exception("Employe existe deja !");
-        employes.add(emp);
-    }
-
-    public void retireEmploye(Employe emp) throws Exception {
-        if(!employes.contains(emp)) throw new Exception("Employe introuvable !");
-        employes.remove(emp);
     }
 
     public int getId_dept() {
@@ -45,7 +34,19 @@ public class Departement {
         return Nom_dept;
     }
 
-    public void setEmployes(List<Employe> employes) {
-        this.employes = employes;
+    public int getNbr_emp() {
+        return nbr_emp;
+    }
+
+    public void setNbr_emp(int nbr_emp) {
+        this.nbr_emp = nbr_emp;
+    }
+
+    public double getMasse() {
+        return masse;
+    }
+
+    public void setMasse(double masse) {
+        this.masse = masse;
     }
 }
