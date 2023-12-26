@@ -30,8 +30,6 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-
-        // Sort the list by department ID
         deps.sort(Comparator.comparingInt(Departement::getId_dept));
         return deps;
     }
@@ -49,6 +47,7 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
+        System.out.println("Département n'est pas trouvé.");
         return Optional.empty();
     }
 
@@ -88,7 +87,7 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
         return null;
     }
 
-    public List<Employe> EmployeesByDepartment(Departement department) {
+    public List<Employe> EmployesparDepartment(Departement department) {
         List<Employe> employees = new ArrayList<>();
         String query = "SELECT * FROM Employee WHERE RefDept = ?";
 
@@ -116,7 +115,7 @@ public class DaoDepartement implements CRUD<Departement, Integer> {
         return employees;
     }
 
-    public Map<Departement, Integer> CountEmployeesByDepartment() {
+    public Map<Departement, Integer> CountEmployesparDepartment() {
         Map<Departement, Integer> employeemap = new HashMap<>();
 
         String query = "SELECT d.IdDept, d.NomDept, COUNT(e.IdEmp) AS EmployeeCount " +

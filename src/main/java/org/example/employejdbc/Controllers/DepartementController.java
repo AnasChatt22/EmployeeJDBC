@@ -66,7 +66,7 @@ public class DepartementController implements Initializable {
     }
 
     public void afficherEmployesParDepartement(ActionEvent actionEvent) {
-        ObservableList<Employe> employes = FXCollections.observableArrayList(daoDepartement.EmployeesByDepartment(dep_select.getSelectionModel().getSelectedItem()));
+        ObservableList<Employe> employes = FXCollections.observableArrayList(daoDepartement.EmployesparDepartment(dep_select.getSelectionModel().getSelectedItem()));
         table.setItems(employes);
 
         id_column.setCellValueFactory(new PropertyValueFactory<Employe, Integer>("Id_emp"));

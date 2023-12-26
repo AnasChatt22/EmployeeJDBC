@@ -78,7 +78,7 @@ public class StatisticsController implements Initializable {
     }
 
     public void afficherNbrEmpMasseParDep() {
-        Map<Departement, Integer> employeemap = daoDepartement.CountEmployeesByDepartment();
+        Map<Departement, Integer> employeemap = daoDepartement.CountEmployesparDepartment();
         ObservableList<Departement> departements = FXCollections.observableArrayList();
 
         for (Map.Entry<Departement, Integer> entry : employeemap.entrySet()) {

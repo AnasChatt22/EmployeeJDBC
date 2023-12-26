@@ -28,7 +28,7 @@ public class DsConnection {
             ds.setPassword("");
             connection = ds.getConnection();
             // Retrieving the connection
-            System.out.println("Connection established....");
+            System.out.println("Connexion établie ...");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

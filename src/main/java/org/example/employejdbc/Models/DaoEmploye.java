@@ -27,16 +27,14 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
 
             int nbr_lignes = Pst.executeUpdate();
             if (nbr_lignes == 1) {
-                System.out.println("Employee added successfully.");
-                // ajouter employé dans la liste des departements
-                // emp.getDep().ajouteEmploye(emp);
+                System.out.println("Employé ajouté avec succès.");
                 return true;
             } else {
-                System.err.println("Addition of Employee failed ! ");
+                System.err.println("Employé n'est pas ajouté");
                 return false;
             }
         } catch (SQLException ex) {
-            System.err.println("Error in Query Create : " + ex.getMessage());
+            System.err.println("Erreur dans la requête Add : " + ex.getMessage());
             return false;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -52,20 +50,16 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(requete);
             while (rs.next()) {
-                Optional<Departement> departementOptional = daoDepartement.Read(rs.getInt(5));
-                Departement departement = departementOptional.orElse(null);
+                Optional<Departement> dep = daoDepartement.Read(rs.getInt(5));
+                Departement departement = dep.orElse(null);
                 employees.add(new Employe(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getInt(4), departement));
             }
-
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        // Sort the list by employee ID
         employees.sort(Comparator.comparingInt(Employe::getId_emp));
-
         return employees;
     }
 
@@ -79,17 +73,18 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             Pst.setInt(1, ID);
             ResultSet rs = Pst.executeQuery();
             if (rs.next()) {
-                System.out.println("Employee found !");
+                System.out.println("Employé trouvé.");
                 Optional<Departement> departementOptional = daoDepartement.Read(rs.getInt(5));
                 Departement departement = departementOptional.orElse(null);
                 Employe emp = new Employe(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getInt(4), departement);
                 return Optional.of(emp);
             }
         } catch (SQLException ex) {
-            System.out.println("Error in the request getarticle : " + ex.getMessage());
+            System.out.println("Erreur dans la requête Read : " + ex.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Employé n'est pas trouvé.");
         return Optional.empty();
     }
 
@@ -105,15 +100,16 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             Pst.setInt(5, ID);
             int ligne = Pst.executeUpdate();
             if (ligne != 0) {
-                System.out.println("Employee updated successfully !");
+                System.out.println("Employé modifié avec succès.");
                 return true;
             } else {
-                System.out.println("Employee not found !");
+                System.out.println("Employé n'est trouvé.");
                 return false;
             }
         } catch (SQLException ex) {
-            System.out.println("Error in request update : " + ex.getMessage());
+            System.out.println("Erreur dans la requête Update : " + ex.getMessage());
         }
+        System.out.println("Employé n'est pas modifié.");
         return false;
     }
 
@@ -128,13 +124,14 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
                 System.out.println(ligne + " employee deleted with success !");
                 return true;
             } else {
-                System.out.println("employee not found !");
+                System.out.println("Employé n'est pas trouvé !");
                 return false;
             }
 
         } catch (SQLException ex) {
-            System.out.println("Error in request delete : " + ex.getMessage());
+            System.out.println("Erreur dans la requête Delete : " + ex.getMessage());
         }
+        System.out.println("Employé n'est pas supprimé.");
         return false;
     }
 
@@ -146,7 +143,7 @@ public class DaoEmploye implements CRUD<Employe, Integer> {
             ResultSet rs = st.executeQuery(requete);
             if (rs.next()) return rs.getLong(1);
         } catch (SQLException ex) {
-            System.out.println("Error in request count : " + ex.getMessage());
+            System.out.println("Erreur dans le requête Count : " + ex.getMessage());
         }
         return 0L; // cast to long
     }
