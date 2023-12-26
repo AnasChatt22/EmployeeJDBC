@@ -45,9 +45,7 @@ This Java project aims to develop an application using JDBC for the management o
 - Display the total number of employees in the company.
 - Display the department with the highest number of employees.
 - Display the number of employees per department.
-- Reassign an employee to a new department.
 - Calculate the total salary mass of the company or a department.
-- Other features deemed interesting.
 
 ## Execution Instructions
 
